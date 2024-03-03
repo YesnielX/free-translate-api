@@ -69,9 +69,21 @@ func sendJSONResponse(w http.ResponseWriter, data interface{}, statusCode int) {
 	}
 }
 
+func PingHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, `{"message": "pong"}`)
+}
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/translate", TranslateHandler)
+	mux.HandleFunc("/ping", PingHandler)
 
 	c := cors.Default().Handler(mux)
 
